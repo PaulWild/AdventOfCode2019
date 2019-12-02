@@ -15,13 +15,13 @@ module Day1 =
         fuelRequiredInternal mass 0.0 
                          
     let Part1 =
-        let lines = File.ReadLines(@"Input/Day1Part1.txt")
+        let lines = File.ReadLines(@"Input/Day1.txt")
         Seq.map float lines
             |> Seq.map fuelRequired
             |> Seq.sum
 
     let Part2 =
-        let lines = File.ReadLines(@"Input/Day1Part1.txt")
+        let lines = File.ReadLines(@"Input/Day1.txt")
         Seq.map float lines
             |> Seq.map fuelRequiredPart2
             |> Seq.sum

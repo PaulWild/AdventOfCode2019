@@ -1,4 +1,4 @@
-module Tests
+module Day1Tests
 
 open System
 open Xunit

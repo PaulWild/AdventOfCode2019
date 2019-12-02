@@ -4,6 +4,9 @@ open System
 open System.IO
 
 module Day1 =
+   
+    let lines = File.ReadLines(@"Input/Day1.txt")
+    
     let fuelRequired mass =
         (mass / 3.0 |> Math.Floor) - 2.0
 
@@ -15,13 +18,11 @@ module Day1 =
         fuelRequiredInternal mass 0.0 
                          
     let Part1 =
-        let lines = File.ReadLines(@"Input/Day1.txt")
         Seq.map float lines
             |> Seq.map fuelRequired
             |> Seq.sum
 
     let Part2 =
-        let lines = File.ReadLines(@"Input/Day1.txt")
         Seq.map float lines
             |> Seq.map fuelRequiredPart2
             |> Seq.sum

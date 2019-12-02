@@ -20,32 +20,23 @@ module Day2 =
             | _ -> failwithf "unknown value"
         
         let result = run input 0
-        [0..result.Count-1] |> Seq.map (fun x-> result.[x])       
-        
+        [0..result.Count-1] |> List.map (fun x-> result.[x])          
+    let input = File.ReadAllText(@"Input/Day2.txt")
+
+    let runFor (input: string)  noun verb =
+        input.Split ','
+            |> Seq.map int
+            |> Seq.mapi (fun idx value -> (idx, value))
+            |> Map.ofSeq
+            |> Map.add 1 noun
+            |> Map.add 2 verb
+            |> Processor
     let Part1 =
-        let lines = File.ReadAllText(@"Input/Day2.txt")
-        let input = lines.Split ','
-                    |> Seq.map int
-                    |> Seq.mapi (fun idx value -> (idx, value))
-                    |> Map.ofSeq
-                    |> Map.add 1 12
-                    |> Map.add 2 2
-                
-        Processor input
+        runFor input 12 2
 
     let Part2 =
-        let lines = File.ReadAllText(@"Input/Day2.txt")
-        
         let rec tryFind (noun,verb) =
-            let input = lines.Split ','
-                        |> Seq.map int
-                        |> Seq.mapi (fun idx value -> (idx, value))
-                        |> Map.ofSeq
-                        |> Map.add 1 noun
-                        |> Map.add 2 verb
-
-            let result = Processor input |> Seq.toList
-            
+            let result = runFor input noun verb
             if result.[0] = 19690720 then (noun, verb) else            
                 match (noun,verb) with
                 | (99,99) -> failwith "couldn't find a result"

@@ -19,8 +19,8 @@ module Day2 =
             | 99 -> map
             | _ -> failwithf "unknown value"
         
-        let result = run input 0
-        [0..result.Count-1] |> List.map (fun x-> result.[x])          
+        run input 0 |> Map.toList |> List.map (fun (_, value) -> value)
+                  
     let input = File.ReadAllText(@"Input/Day2.txt")
 
     let runFor (input: string)  noun verb =
@@ -31,8 +31,7 @@ module Day2 =
             |> Map.add 1 noun
             |> Map.add 2 verb
             |> Processor
-    let Part1 =
-        runFor input 12 2
+    let Part1 = runFor input 12 2
 
     let Part2 =
         let rec tryFind (noun,verb) =
@@ -44,7 +43,3 @@ module Day2 =
                 | (_,_)   -> tryFind (noun, verb+1)
         
         tryFind (0,0)
-            
-
-        
-

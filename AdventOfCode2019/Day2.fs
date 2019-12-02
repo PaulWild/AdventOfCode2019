@@ -31,6 +31,7 @@ module Day2 =
             |> Map.add 1 noun
             |> Map.add 2 verb
             |> Processor
+    
     let Part1 = runFor input 12 2
 
     let Part2 =
@@ -39,7 +40,7 @@ module Day2 =
             if result.[0] = 19690720 then (noun, verb) else            
                 match (noun,verb) with
                 | (99,99) -> failwith "couldn't find a result"
-                | (_, 99) -> tryFind (noun+1, 0)
+                | (_,99) -> tryFind (noun+1, 0)
                 | (_,_)   -> tryFind (noun, verb+1)
         
         tryFind (0,0)

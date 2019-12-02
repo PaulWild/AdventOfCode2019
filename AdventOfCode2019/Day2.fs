@@ -4,22 +4,29 @@ open System.IO
 
 module Day2 =
     
-    let Processor input =             
-        let rec run (map: Map<int,int>) currentIndex  =
-            match map.[currentIndex] with
-            | 1 | 2 as op ->                    
-                let x = map.[currentIndex + 1]
-                let y = map.[currentIndex + 2]
-                let pos = map.[currentIndex + 3]
-                let newIndex = currentIndex + 4
+    let calculateItem (map: Map<int,int>) currentIndex operation =
+        let x = map.[currentIndex + 1]
+        let y = map.[currentIndex + 2]
+        let pos = map.[currentIndex + 3]
 
-                let result = if op = 1 then map.[x] + map.[y] else  map.[x] * map.[y] 
-                let newMap = map.Add(pos, result)
-                run newMap newIndex    
+        let result = operation map.[x] map.[y] 
+        map.Add(pos, result)
+
+    let plus x y = x + y
+    
+    let multiply  x y = x * y
+    
+    let Processor input =             
+        let rec run currentIndex (map: Map<int,int>)   =
+            let newIndex = currentIndex + 4
+            
+            match map.[currentIndex] with
+            | 1  -> run newIndex <| calculateItem map currentIndex plus 
+            | 2  -> run newIndex <| calculateItem map currentIndex multiply                                       
             | 99 -> map
-            | _ -> failwithf "unknown value"
-        
-        run input 0 |> Map.toList |> List.map (fun (_, value) -> value)
+            | _  -> failwithf "unknown value"
+            
+        run 0 input |> Map.toList |> List.map (fun (_, value) -> value)
                   
     let input = File.ReadAllText(@"Input/Day2.txt")
 

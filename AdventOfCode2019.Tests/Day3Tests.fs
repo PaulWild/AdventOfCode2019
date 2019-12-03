@@ -55,6 +55,6 @@ let ``Example5`` () =
 
 [<Fact>]
 let ``Part2`` () =
-    let expected = 410
+    let expected = 11432
     let actual = Part2 (input |> Array.toList)
     Assert.Equal(expected, actual) 

@@ -4,31 +4,81 @@ open System.IO
 
 module Day2 =
     
-    let calculateItem (map: Map<int,int>) currentIndex operation =
-        let x = map.[currentIndex + 1]
-        let y = map.[currentIndex + 2]
-        let pos = map.[currentIndex + 3]
+    type Mode = | Pos | Im
 
-        let result = operation map.[x] map.[y] 
-        map.Add(pos, result)
+    type Op = | Plus | Multiply | Set | Get | Halt
 
     let plus x y = x + y
     
     let multiply  x y = x * y
     
-    let Processor input =             
-        let rec run currentIndex (map: Map<int,int>)   =
-            let newIndex = currentIndex + 4
-            
-            match map.[currentIndex] with
-            | 1  -> run newIndex <| calculateItem map currentIndex plus 
-            | 2  -> run newIndex <| calculateItem map currentIndex multiply                                       
-            | 99 -> map
-            | _  -> failwithf "unknown value"
-            
-        run 0 input |> Map.toList |> List.map (fun (_, value) -> value)
+    let getAt (map: Map<int,int>) idx mode =
+        match mode with 
+        | Pos -> map.[map.[idx]]
+        | Im -> map.[idx]
+
+    let calculateItem (map: Map<int,int>) currentIndex operation =
+        let (op, p1, p2, p3) = operation
+
+        let x = getAt map (currentIndex + 1) p1
+        let y = getAt map (currentIndex + 2) p2
+        let pos = getAt map (currentIndex + 3) Im
+
+        let result = op x y
+        map.Add(pos, result)
+
+    let setInput (map: Map<int, int>) currentIndex value =
+        let setAt = map.[currentIndex + 1]
+        match value with
+        | Some x ->  map.Add(setAt, x)
+        | None -> failwithf "no input value set doofus"
+
+    let getOutput (map: Map<int, int>) currentIndex p1  =
+        getAt map (currentIndex + 1) p1
+
+    let toMode char = 
+        match char with
+        | '0' -> Pos
+        | '1' -> Im
+        | _ -> failwithf "not a mode type"
+
+    let processCrazyIntCode number =
+        let fullCode = number.ToString().PadLeft(5, '0')
+        let op = match fullCode.[4] with
+                    | '1' -> Plus
+                    | '2' -> Multiply
+                    | '3' -> Set
+                    | '4' -> Get
+                    | '9' -> Halt
+                    | _ -> failwithf "derp"
+
+        let pos1 = toMode fullCode.[2]
+        let pos2 = toMode fullCode.[1]
+        let pos3 = toMode fullCode.[0]
+        (op,pos1,pos2,pos3)
+        
+
+    let Processor inputValue input =             
+        let rec run currentIndex output (map: Map<int,int>)    =
+
+            let (opType, m1,m2,m3) = processCrazyIntCode map.[currentIndex]
+            match opType with
+            | Plus      -> run (currentIndex + 4) output <| calculateItem map currentIndex (plus, m1, m2 ,m3) 
+            | Multiply  -> run (currentIndex + 4) output <| calculateItem map currentIndex (multiply, m1, m2, m3) 
+            | Set       -> run (currentIndex + 2) output <| setInput map currentIndex inputValue
+            | Get       -> run (currentIndex + 2) (Some (getOutput map currentIndex m1)) map 
+            | Halt      -> match output with | Some x -> x | None ->  map.[0]
+
+        run 0 None input 
                   
     let input = File.ReadAllText(@"Input/Day2.txt")
+
+    let runForDay5 (input: string) inputValue = 
+        input.Split ','
+            |> Seq.map int
+            |> Seq.mapi (fun idx value -> (idx, value))
+            |> Map.ofSeq
+            |> Processor inputValue
 
     let runFor (input: string)  noun verb =
         input.Split ','
@@ -37,14 +87,14 @@ module Day2 =
             |> Map.ofSeq
             |> Map.add 1 noun
             |> Map.add 2 verb
-            |> Processor
+            |> Processor None
     
-    let Part1 = runFor input 12 2
+    let Part1 = runFor input 12 2 
 
     let Part2 =
         let rec tryFind (noun,verb) =
             let result = runFor input noun verb
-            if result.[0] = 19690720 then (noun, verb) else            
+            if result = 19690720 then (noun, verb) else            
                 match (noun,verb) with
                 | (99,99) -> failwith "couldn't find a result"
                 | (_,99) -> tryFind (noun+1, 0)

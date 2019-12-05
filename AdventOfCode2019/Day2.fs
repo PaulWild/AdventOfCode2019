@@ -6,11 +6,15 @@ module Day2 =
     
     type Mode = | Pos | Im
 
-    type Op = | Plus | Multiply | Set | Get | Halt
+    type Op = | Plus | Multiply | Set | Get | Halt | JumpTrue | JumpFalse | LessThan | Equals
 
     let plus x y = x + y
     
     let multiply  x y = x * y
+
+    let lessThan x y = if x < y then 1 else 0 
+
+    let equals x y = if x = y then 1 else 0
     
     let getAt (map: Map<int,int>) idx mode =
         match mode with 
@@ -49,6 +53,10 @@ module Day2 =
                     | '2' -> Multiply
                     | '3' -> Set
                     | '4' -> Get
+                    | '5' -> JumpTrue
+                    | '6' -> JumpFalse
+                    | '7' -> LessThan
+                    | '8' -> Equals
                     | '9' -> Halt
                     | _ -> failwithf "derp"
 
@@ -57,6 +65,14 @@ module Day2 =
         let pos3 = toMode fullCode.[0]
         (op,pos1,pos2,pos3)
         
+    let jumpTrue  (map: Map<int,int>) currentIndex modes = 
+        let (m1 ,m2) = modes
+        if (getAt map (currentIndex+1) m1) <> 0 then (getAt map (currentIndex+2) m2) else currentIndex + 3
+
+
+    let jumpFalse (map: Map<int,int>) currentIndex modes = 
+        let (m1, m2) = modes
+        if (getAt map (currentIndex+1) m1) = 0 then (getAt map (currentIndex+2) m2) else currentIndex + 3
 
     let Processor inputValue input =             
         let rec run currentIndex output (map: Map<int,int>)    =
@@ -67,6 +83,10 @@ module Day2 =
             | Multiply  -> run (currentIndex + 4) output <| calculateItem map currentIndex (multiply, m1, m2, m3) 
             | Set       -> run (currentIndex + 2) output <| setInput map currentIndex inputValue
             | Get       -> run (currentIndex + 2) (Some (getOutput map currentIndex m1)) map 
+            | LessThan  -> run (currentIndex + 4) output <| calculateItem map currentIndex (lessThan, m1, m2, m3) 
+            | Equals    -> run (currentIndex + 4) output <| calculateItem map currentIndex (equals, m1, m2, m3)
+            | JumpTrue  -> run (jumpTrue map currentIndex (m1,m2)) output map 
+            | JumpFalse -> run (jumpFalse map currentIndex (m1,m2)) output map                   
             | Halt      -> match output with | Some x -> x | None ->  map.[0]
 
         run 0 None input 

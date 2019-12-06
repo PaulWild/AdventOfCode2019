@@ -14,7 +14,6 @@ let ``Example1`` () =
     let actual = runFor input
     Assert.Equal(expected, actual) 
 
-
 [<Fact>]
 let ``Example2`` () =
     let input = ["R75,D30,R83,U83,L12,D49,R71,U7,L72";"U62,R66,U55,R34,D71,R55,D58,R83"]
@@ -30,14 +29,11 @@ let ``Example3`` () =
     let actual = runFor input
     Assert.Equal(expected, actual) 
 
-
 [<Fact>]
 let ``Part1`` () =
     let expected = 1017
     let actual = Part1
     Assert.Equal(expected, actual) 
-
-
 
 [<Fact>]
 let ``Example4`` () =

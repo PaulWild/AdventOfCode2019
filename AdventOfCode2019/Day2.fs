@@ -12,7 +12,7 @@ module Day2 =
         Output: int Option;
         IntCodes: Map<int,int>;
         CurrentIndex: int;
-        Input: int Option;
+        Input: int list Option;
     }
     
     let getAt data idx mode =
@@ -36,10 +36,11 @@ module Day2 =
     let setInput data =
         let setAt = data.IntCodes.[data.CurrentIndex + 1]
         match data.Input with
-        | Some x ->  {data with
-                        IntCodes = data.IntCodes.Add(setAt, x);
-                        CurrentIndex = data.CurrentIndex+2 }
-        | None -> failwithf "no input value set doofus"
+        | Some (x :: hs) ->  {data with
+                                IntCodes = data.IntCodes.Add(setAt, x);
+                                CurrentIndex = data.CurrentIndex+2
+                                Input = Some hs }
+        | None | Some []-> failwithf "no input value set doofus"
 
     let getOutput data p1  =
         {data with

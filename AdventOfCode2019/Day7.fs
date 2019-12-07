@@ -26,5 +26,3 @@ module Day7 =
         let phases = [4;3;2;1;0] 
         let perm = permutations phases
         perm |> List.map (fun x -> run x input 0) |> List.max
-        
-        

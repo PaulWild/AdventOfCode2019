@@ -9,10 +9,12 @@ module Day2 =
     let equals x y = if x = y then 1 else 0
     let charToInt c = int c - int '0'
     type Data = {
+        IO: int Option;
         Output: int Option;
         IntCodes: Map<int,int>;
         CurrentIndex: int;
         Input: int list Option;
+        Phases: int list;
     }
     
     let getAt data idx mode =
@@ -91,7 +93,7 @@ module Day2 =
                     |> Seq.map int
                     |> Seq.mapi (fun idx value -> (idx, value))
                     |> Map.ofSeq
-        Processor { IntCodes=map; Input=inputValue; Output=None; CurrentIndex=0 }
+        Processor { IntCodes=map; Input=inputValue; Output=None; CurrentIndex=0; Phases=List.empty }
 
     let runFor (input: string)  noun verb =
         let map = input.Split ','
@@ -100,7 +102,7 @@ module Day2 =
                     |> Map.ofSeq
                     |> Map.add 1 noun
                     |> Map.add 2 verb
-        Processor { IntCodes=map; Input=None; Output=None; CurrentIndex=0 }
+        Processor { IntCodes=map; Input=None; Output=None; CurrentIndex=0; Phases=List.empty }
     
     let Part1 = runFor input 12 2 
 

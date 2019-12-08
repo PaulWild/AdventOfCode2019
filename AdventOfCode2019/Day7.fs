@@ -1,8 +1,10 @@
 namespace AdventOfCode2019
 
-open Day2
+open IntCode
 
 module Day7 =
+    
+    //NB this wont work when there are duplicates in the list 
     let permutations (l: int list) = 
         let rec permInt (blah:int list*int list) =
             match blah with
@@ -26,17 +28,13 @@ module Day7 =
             run xs data d.Output.Value
         | [] -> input        
         
-    let runForDay7 (input: string) inputValue phases= 
-        let map = input.Split ','
-                    |> Seq.map int
-                    |> Seq.mapi (fun idx value -> (idx, value))
-                    |> Map.ofSeq
-        run phases { IntCodes=map; Input=inputValue; CurrentIndex=0; Output=None; State=Running} 0 
-     
     let runForPart1 (input: string) =
         let phases = [4;3;2;1;0] 
         let perm = permutations phases
-        perm |> List.map (fun x -> runForDay7 input (Some 0) x) |> List.max
+        let map = stringToMap input
+        let data = InitState map None
+        
+        perm |> List.map (fun x -> run x data 0) |> List.max
         
     let rec feedback a1 a2 a3 a4 a5 input =
         let amp1 = Processor {a1 with Input = input }
@@ -52,11 +50,9 @@ module Day7 =
     let runForPart2 (input: string) =
         let phases = [9;8;7;6;5]
         let perm = permutations phases
-        let map = input.Split ','
-                    |> Seq.map int
-                    |> Seq.mapi (fun idx value -> (idx, value))
-                    |> Map.ofSeq
-        let data = { IntCodes=map; Input=(Some 0); CurrentIndex=0; Output=None; State=Running}  
+        let map = stringToMap input
+        let data = InitState map (Some 0)
+        
         perm |> List.map (fun x -> feedback
                                     (Processor {data with Input=Some x.[0]})
                                     (Processor {data with Input=Some x.[1]})

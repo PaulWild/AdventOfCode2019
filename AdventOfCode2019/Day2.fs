@@ -8,12 +8,13 @@ module Day2 =
     let lessThan x y = if x < y then 1 else 0 
     let equals x y = if x = y then 1 else 0
     let charToInt c = int c - int '0'
+    type state = Halted | Input | Running
     type Data = {
-        IO: int Option;
+        State: state
+        Input: int Option;
         Output: int Option;
         IntCodes: Map<int,int>;
         CurrentIndex: int;
-        Input: int list Option;
         Phases: int list;
     }
     
@@ -38,16 +39,21 @@ module Day2 =
     let setInput data =
         let setAt = data.IntCodes.[data.CurrentIndex + 1]
         match data.Input with
-        | Some (x :: hs) ->  {data with
-                                IntCodes = data.IntCodes.Add(setAt, x);
-                                CurrentIndex = data.CurrentIndex+2
-                                Input = Some hs }
-        | None | Some []-> failwithf "no input value set doofus"
+        | Some(x) ->  {data with
+                        IntCodes = data.IntCodes.Add(setAt, data.Input.Value);
+                        CurrentIndex = data.CurrentIndex+2
+                        Input = None
+                        State = Running }
+        | None ->  {data with
+                        IntCodes = data.IntCodes.Add(setAt, data.Phases.Head);
+                        CurrentIndex = data.CurrentIndex+2
+                        Phases = List.append data.Phases.Tail [data.Phases.Head]
+                        State = Input }
 
     let getOutput data p1  =
         {data with
                 Output = getAt data (data.CurrentIndex + 1) p1 |> Some;
-                CurrentIndex = data.CurrentIndex+2}
+                CurrentIndex = data.CurrentIndex+2  }
 
     let getModesAndOp data =
         let fullCode = data.IntCodes.[data.CurrentIndex].ToString().PadLeft(5, '0')
@@ -93,7 +99,7 @@ module Day2 =
                     |> Seq.map int
                     |> Seq.mapi (fun idx value -> (idx, value))
                     |> Map.ofSeq
-        Processor { IntCodes=map; Input=inputValue; Output=None; CurrentIndex=0; Phases=List.empty }
+        Processor { IntCodes=map; Input=inputValue; CurrentIndex=0; Phases=List.empty; State=Running; Output=None }
 
     let runFor (input: string)  noun verb =
         let map = input.Split ','
@@ -102,7 +108,7 @@ module Day2 =
                     |> Map.ofSeq
                     |> Map.add 1 noun
                     |> Map.add 2 verb
-        Processor { IntCodes=map; Input=None; Output=None; CurrentIndex=0; Phases=List.empty }
+        Processor { IntCodes=map; Input=None; CurrentIndex=0; Phases=List.empty; State=Running; Output=None }
     
     let Part1 = runFor input 12 2 
 

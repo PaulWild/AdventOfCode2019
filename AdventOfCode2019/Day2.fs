@@ -15,7 +15,6 @@ module Day2 =
         Output: int Option;
         IntCodes: Map<int,int>;
         CurrentIndex: int;
-        Phases: int list;
     }
     
     let getAt data idx mode =
@@ -40,15 +39,11 @@ module Day2 =
         let setAt = data.IntCodes.[data.CurrentIndex + 1]
         match data.Input with
         | Some(x) ->  {data with
-                        IntCodes = data.IntCodes.Add(setAt, data.Input.Value);
+                        IntCodes = data.IntCodes.Add(setAt, x);
                         CurrentIndex = data.CurrentIndex+2
                         Input = None
                         State = Running }
-        | None ->  {data with
-                        IntCodes = data.IntCodes.Add(setAt, data.Phases.Head);
-                        CurrentIndex = data.CurrentIndex+2
-                        Phases = List.append data.Phases.Tail [data.Phases.Head]
-                        State = Input }
+        | None ->  {data with State = Input }
 
     let getOutput data p1  =
         {data with
@@ -81,13 +76,17 @@ module Day2 =
             match opType with
             | 1 -> run <| calculateItem data (plus, m1, m2 ,m3)
             | 2 -> run <| calculateItem data (multiply, m1, m2 ,m3)  
-            | 3 -> run <| setInput data
+            | 3 ->
+                let d = setInput data
+                match d.State with
+                | Input | Halted -> d
+                | Running -> run d
             | 4 -> run <| getOutput data m1       
             | 5 -> run <| jumpTrue data (m1,m2) 
             | 6 -> run <| jumpFalse data (m1,m2)
             | 7 -> run <| calculateItem data (lessThan, m1, m2, m3) 
             | 8 -> run <| calculateItem data (equals, m1, m2, m3)
-            | 9 -> match data.Output with | Some x -> x | None ->  data.IntCodes.[0]
+            | 9 -> { data with State=Halted }
             | _ -> failwithf "nope"
 
         run data 
@@ -99,7 +98,7 @@ module Day2 =
                     |> Seq.map int
                     |> Seq.mapi (fun idx value -> (idx, value))
                     |> Map.ofSeq
-        Processor { IntCodes=map; Input=inputValue; CurrentIndex=0; Phases=List.empty; State=Running; Output=None }
+        Processor { IntCodes=map; Input=inputValue; CurrentIndex=0; State=Running; Output=None }
 
     let runFor (input: string)  noun verb =
         let map = input.Split ','
@@ -108,14 +107,14 @@ module Day2 =
                     |> Map.ofSeq
                     |> Map.add 1 noun
                     |> Map.add 2 verb
-        Processor { IntCodes=map; Input=None; CurrentIndex=0; Phases=List.empty; State=Running; Output=None }
+        Processor { IntCodes=map; Input=None; CurrentIndex=0; State=Running; Output=None }
     
     let Part1 = runFor input 12 2 
 
     let Part2 =
         let rec tryFind (noun,verb) =
             let result = runFor input noun verb
-            if result = 19690720 then (noun, verb) else            
+            if result.IntCodes.[0] = 19690720 then (noun, verb) else            
                 match (noun,verb) with
                 | (99,99) -> failwith "couldn't find a result"
                 | (_,99) -> tryFind (noun+1, 0)

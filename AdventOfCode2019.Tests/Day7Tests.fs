@@ -17,7 +17,7 @@ let ``Part1`` () =
 [<Fact>]
 let ``Part2`` () =
     let input = File.ReadAllText(@"Input/Day7.txt")
-    let expected = Some 34852
+    let expected = Some 44282086
     
     let actual = runForPart2 input 
     Assert.Equal(expected, actual) 

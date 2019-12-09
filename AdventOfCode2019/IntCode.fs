@@ -1,14 +1,6 @@
 namespace AdventOfCode2019
 
 module IntCode =
-
-    let plus x y = x + y
-    
-    let multiply  x y = x * y
-    
-    let lessThan x y = if x < y then 1L else 0L 
-    
-    let equals x y = if x = y then 1L else 0L
     
     let charToInt c = int c - int '0'
     
@@ -93,32 +85,27 @@ module IntCode =
         let rel = getAt data (data.CurrentIndex+1L) mode
         { data with RelativeBase=data.RelativeBase+rel; CurrentIndex = data.CurrentIndex+2L}
 
-
-    let Processor data =             
-        let rec run data =
-            
-            let inputGen data mode =
-                let d = setInput data mode
-                match d.State with
-                | Input | Halted -> d
-                | Running -> run d 
-            
-            let (opType, m1,m2,m3) = getModesAndOp data
-            match opType with
-            | 1 -> run <| calculateItem data (plus, m1, m2 ,m3)
-            | 2 -> run <| calculateItem data (multiply, m1, m2 ,m3)  
-            | 3 -> inputGen data m1
-            | 4 -> run <| getOutput data m1       
-            | 5 -> run <| jumpTrue data (m1,m2) 
-            | 6 -> run <| jumpFalse data (m1,m2)
-            | 7 -> run <| calculateItem data (lessThan, m1, m2, m3) 
-            | 8 -> run <| calculateItem data (equals, m1, m2, m3)
-            | 9 -> run <| updateRelativeBase data m1
-            | 99 -> { data with State=Halted }
-            | _ -> failwithf "nope"
-
-        run data
-        
+    let RunCode data =             
+        let (opType, m1,m2,m3) = getModesAndOp data
+        match opType with
+        | 1  -> calculateItem data ((fun x y -> x + y), m1, m2 ,m3)
+        | 2  -> calculateItem data ((fun x y -> x * y), m1, m2 ,m3)  
+        | 3  -> setInput data m1
+        | 4  -> getOutput data m1       
+        | 5  -> jumpTrue data (m1,m2) 
+        | 6  -> jumpFalse data (m1,m2)
+        | 7  -> calculateItem data ((fun x y -> if x < y then 1L else 0L), m1, m2, m3) 
+        | 8  -> calculateItem data ((fun x y -> if x = y then 1L else 0L), m1, m2, m3)
+        | 9  -> updateRelativeBase data m1
+        | 99 -> { data with State=Halted }
+        | _  -> failwithf "nope"
+   
+    let rec Processor data =
+        let newData = RunCode data
+        match newData.State with
+        | Input | Halted -> newData
+        | Running -> Processor newData
+                
     let InitState map input =
         { IntCodes=map; Input=input; CurrentIndex=0L; State=Running; Output=List.empty; RelativeBase=0L }
 

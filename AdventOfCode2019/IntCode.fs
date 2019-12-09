@@ -20,44 +20,58 @@ module IntCode =
         Output: int64 Option;
         IntCodes: Map<int64,int64>;
         CurrentIndex: int64;
+        RelativeBase: int64;
     }
     
+    let getInt data idx =
+        let hasValue = data.IntCodes.TryFind idx 
+        match hasValue with
+        | Some(x) -> x
+        | None -> 0L
+
     let getAt data idx mode =
         match mode with 
-        | 0 -> data.IntCodes.[data.IntCodes.[idx]]
-        | 1 -> data.IntCodes.[idx]
+        | 0 -> getInt data (getInt data idx)
+        | 1 -> getInt data idx
+        | 2 -> getInt data (data.RelativeBase + getInt data idx)
+        | _ -> failwithf "nope"
+
+    let setAt data idx mode value = 
+        match mode with 
+        | 0 -> data.IntCodes.Add(getInt data idx, value)
+        | 1 -> data.IntCodes.Add(getInt data idx, value)
+        | 2 -> data.IntCodes.Add(data.RelativeBase + getInt data idx, value)
         | _ -> failwithf "nope"
         
     let calculateItem data operation =
-        let (op, p1, p2, _) = operation
+        let (op, p1, p2, p3) = operation
 
         let x = getAt data (data.CurrentIndex + 1L) p1
         let y = getAt data (data.CurrentIndex + 2L) p2
-        let pos = getAt data (data.CurrentIndex + 3L) 1
 
         let result = op x y
         {data with
-            IntCodes = data.IntCodes.Add(pos, result);
+            IntCodes = setAt data (data.CurrentIndex + 3L) p3 result
             CurrentIndex = data.CurrentIndex+4L }
 
-    let setInput data =
-        let setAt = data.IntCodes.[data.CurrentIndex + 1L]
+    let setInput data mode =
         match data.Input with
         | Some(x) ->  {data with
-                        IntCodes = data.IntCodes.Add(setAt, x);
+                        IntCodes = setAt data (data.CurrentIndex + 1L) mode x
                         CurrentIndex = data.CurrentIndex+2L
                         Input = None
                         State = Running }
         | None ->  {data with State = Input }
 
     let getOutput data p1  =
+        let output = getAt data (data.CurrentIndex + 1L) p1
         {data with
-                Output = getAt data (data.CurrentIndex + 1L) p1 |> Some;
+                Output =  Some output;
                 CurrentIndex = data.CurrentIndex+2L  }
 
     let getModesAndOp data =
         let fullCode = data.IntCodes.[data.CurrentIndex].ToString().PadLeft(5, '0')
-        let op = charToInt fullCode.[4]                 
+        let op = fullCode.Substring(3) |> int            
         let pos1 = charToInt fullCode.[2]
         let pos2 = charToInt fullCode.[1]
         let pos3 = charToInt fullCode.[0]
@@ -75,11 +89,16 @@ module IntCode =
             then { data with CurrentIndex = (getAt data (data.CurrentIndex+2L) m2)}
             else { data with CurrentIndex = data.CurrentIndex+3L}
 
+    let updateRelativeBase data mode =
+        let rel = getAt data (data.CurrentIndex+1L) mode
+        { data with RelativeBase=data.RelativeBase+rel; CurrentIndex = data.CurrentIndex+2L}
+
+
     let Processor data =             
         let rec run data =
             
-            let inputGen data =
-                let d = setInput data
+            let inputGen data mode =
+                let d = setInput data mode
                 match d.State with
                 | Input | Halted -> d
                 | Running -> run d 
@@ -88,19 +107,20 @@ module IntCode =
             match opType with
             | 1 -> run <| calculateItem data (plus, m1, m2 ,m3)
             | 2 -> run <| calculateItem data (multiply, m1, m2 ,m3)  
-            | 3 -> inputGen data
+            | 3 -> inputGen data m1
             | 4 -> run <| getOutput data m1       
             | 5 -> run <| jumpTrue data (m1,m2) 
             | 6 -> run <| jumpFalse data (m1,m2)
             | 7 -> run <| calculateItem data (lessThan, m1, m2, m3) 
             | 8 -> run <| calculateItem data (equals, m1, m2, m3)
-            | 9 -> { data with State=Halted }
+            | 9 -> run <| updateRelativeBase data m1
+            | 99 -> { data with State=Halted }
             | _ -> failwithf "nope"
 
         run data
         
     let InitState map input =
-        { IntCodes=map; Input=input; CurrentIndex=0L; State=Running; Output=None }
+        { IntCodes=map; Input=input; CurrentIndex=0L; State=Running; Output=None; RelativeBase=0L }
 
     let stringToMap (input: string) =
         input.Split ','

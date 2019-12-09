@@ -17,7 +17,7 @@ module IntCode =
     type Data = {
         State: state
         Input: int64 Option;
-        Output: int64 Option;
+        Output: int64 List;
         IntCodes: Map<int64,int64>;
         CurrentIndex: int64;
         RelativeBase: int64;
@@ -66,7 +66,7 @@ module IntCode =
     let getOutput data p1  =
         let output = getAt data (data.CurrentIndex + 1L) p1
         {data with
-                Output =  Some output;
+                Output =  output :: data.Output;
                 CurrentIndex = data.CurrentIndex+2L  }
 
     let getModesAndOp data =
@@ -120,7 +120,7 @@ module IntCode =
         run data
         
     let InitState map input =
-        { IntCodes=map; Input=input; CurrentIndex=0L; State=Running; Output=None; RelativeBase=0L }
+        { IntCodes=map; Input=input; CurrentIndex=0L; State=Running; Output=List.empty; RelativeBase=0L }
 
     let stringToMap (input: string) =
         input.Split ','

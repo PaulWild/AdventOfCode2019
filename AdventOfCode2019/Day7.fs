@@ -25,7 +25,7 @@ module Day7 =
         match phases with
         | x :: xs ->
             let d = processForPhase data x input
-            run xs data d.Output.Value
+            run xs data d.Output.[0]
         | [] -> input        
         
     let runForPart1 (input: string) =
@@ -38,14 +38,14 @@ module Day7 =
         
     let rec feedback a1 a2 a3 a4 a5 input =
         let amp1 = Processor {a1 with Input = input }
-        let amp2 = Processor {a2 with Input = amp1.Output } 
-        let amp3 = Processor {a3 with Input = amp2.Output }
-        let amp4 = Processor {a4 with Input = amp3.Output }
-        let amp5 = Processor {a5 with Input = amp4.Output }
+        let amp2 = Processor {a2 with Input = Some amp1.Output.[0] } 
+        let amp3 = Processor {a3 with Input = Some amp2.Output.[0] }
+        let amp4 = Processor {a4 with Input = Some amp3.Output.[0] }
+        let amp5 = Processor {a5 with Input = Some amp4.Output.[0] }
         
         match amp5.State with
-        | Running | Input -> feedback amp1 amp2 amp3 amp4 amp5 amp5.Output
-        | Halted -> amp5.Output
+        | Running | Input -> feedback amp1 amp2 amp3 amp4 amp5 (Some amp5.Output.[0])
+        | Halted -> amp5.Output.[0]
 
     let runForPart2 (input: string) =
         let phases = [9L;8L;7L;6L;5L]

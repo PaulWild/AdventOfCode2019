@@ -5,8 +5,8 @@ open IntCode
 module Day7 =
     
     //NB this wont work when there are duplicates in the list 
-    let permutations (l: int list) = 
-        let rec permInt (blah:int list*int list) =
+    let permutations (l: int64 list) = 
+        let rec permInt (blah:int64 list*int64 list) =
             match blah with
             | (xs, []) -> [xs]
             | (xs, ys) ->
@@ -29,12 +29,12 @@ module Day7 =
         | [] -> input        
         
     let runForPart1 (input: string) =
-        let phases = [4;3;2;1;0] 
+        let phases = [4L;3L;2L;1L;0L] 
         let perm = permutations phases
         let map = stringToMap input
         let data = InitState map None
         
-        perm |> List.map (fun x -> run x data 0) |> List.max
+        perm |> List.map (fun x -> run x data 0L) |> List.max
         
     let rec feedback a1 a2 a3 a4 a5 input =
         let amp1 = Processor {a1 with Input = input }
@@ -48,10 +48,10 @@ module Day7 =
         | Halted -> amp5.Output
 
     let runForPart2 (input: string) =
-        let phases = [9;8;7;6;5]
+        let phases = [9L;8L;7L;6L;5L]
         let perm = permutations phases
         let map = stringToMap input
-        let data = InitState map (Some 0)
+        let data = InitState map (Some 0L)
         
         perm |> List.map (fun x -> feedback
                                     (Processor {data with Input=Some x.[0]})
@@ -59,4 +59,4 @@ module Day7 =
                                     (Processor {data with Input=Some x.[2]})
                                     (Processor {data with Input=Some x.[3]})
                                     (Processor {data with Input=Some x.[4]})
-                                    (Some 0)) |> List.max
+                                    (Some 0L)) |> List.max

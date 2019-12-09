@@ -6,9 +6,9 @@ module IntCode =
     
     let multiply  x y = x * y
     
-    let lessThan x y = if x < y then 1 else 0 
+    let lessThan x y = if x < y then 1L else 0L 
     
-    let equals x y = if x = y then 1 else 0
+    let equals x y = if x = y then 1L else 0L
     
     let charToInt c = int c - int '0'
     
@@ -16,10 +16,10 @@ module IntCode =
     
     type Data = {
         State: state
-        Input: int Option;
-        Output: int Option;
-        IntCodes: Map<int,int>;
-        CurrentIndex: int;
+        Input: int64 Option;
+        Output: int64 Option;
+        IntCodes: Map<int64,int64>;
+        CurrentIndex: int64;
     }
     
     let getAt data idx mode =
@@ -31,29 +31,29 @@ module IntCode =
     let calculateItem data operation =
         let (op, p1, p2, _) = operation
 
-        let x = getAt data (data.CurrentIndex + 1) p1
-        let y = getAt data (data.CurrentIndex + 2) p2
-        let pos = getAt data (data.CurrentIndex + 3) 1
+        let x = getAt data (data.CurrentIndex + 1L) p1
+        let y = getAt data (data.CurrentIndex + 2L) p2
+        let pos = getAt data (data.CurrentIndex + 3L) 1
 
         let result = op x y
         {data with
             IntCodes = data.IntCodes.Add(pos, result);
-            CurrentIndex = data.CurrentIndex+4 }
+            CurrentIndex = data.CurrentIndex+4L }
 
     let setInput data =
-        let setAt = data.IntCodes.[data.CurrentIndex + 1]
+        let setAt = data.IntCodes.[data.CurrentIndex + 1L]
         match data.Input with
         | Some(x) ->  {data with
                         IntCodes = data.IntCodes.Add(setAt, x);
-                        CurrentIndex = data.CurrentIndex+2
+                        CurrentIndex = data.CurrentIndex+2L
                         Input = None
                         State = Running }
         | None ->  {data with State = Input }
 
     let getOutput data p1  =
         {data with
-                Output = getAt data (data.CurrentIndex + 1) p1 |> Some;
-                CurrentIndex = data.CurrentIndex+2  }
+                Output = getAt data (data.CurrentIndex + 1L) p1 |> Some;
+                CurrentIndex = data.CurrentIndex+2L  }
 
     let getModesAndOp data =
         let fullCode = data.IntCodes.[data.CurrentIndex].ToString().PadLeft(5, '0')
@@ -65,15 +65,15 @@ module IntCode =
         
     let jumpTrue data modes = 
         let (m1 ,m2) = modes
-        if (getAt data (data.CurrentIndex+1) m1) <> 0
-            then { data with CurrentIndex = (getAt data (data.CurrentIndex+2) m2)}
-            else { data with CurrentIndex = data.CurrentIndex+3}
+        if (getAt data (data.CurrentIndex+1L) m1) <> 0L
+            then { data with CurrentIndex = (getAt data (data.CurrentIndex+2L) m2)}
+            else { data with CurrentIndex = data.CurrentIndex+3L}
 
     let jumpFalse data modes  = 
         let (m1, m2) = modes
-        if (getAt data (data.CurrentIndex+1) m1) = 0
-            then { data with CurrentIndex = (getAt data (data.CurrentIndex+2) m2)}
-            else { data with CurrentIndex = data.CurrentIndex+3}
+        if (getAt data (data.CurrentIndex+1L) m1) = 0L
+            then { data with CurrentIndex = (getAt data (data.CurrentIndex+2L) m2)}
+            else { data with CurrentIndex = data.CurrentIndex+3L}
 
     let Processor data =             
         let rec run data =
@@ -100,10 +100,10 @@ module IntCode =
         run data
         
     let InitState map input =
-        { IntCodes=map; Input=input; CurrentIndex=0; State=Running; Output=None }
+        { IntCodes=map; Input=input; CurrentIndex=0L; State=Running; Output=None }
 
     let stringToMap (input: string) =
         input.Split ','
-            |> Seq.map int
-            |> Seq.mapi (fun idx value -> (idx, value))
+            |> Seq.map int64
+            |> Seq.mapi (fun idx value -> (int64 idx, value))
             |> Map.ofSeq

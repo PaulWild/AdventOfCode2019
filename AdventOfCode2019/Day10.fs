@@ -14,7 +14,7 @@ module Day10 =
     let magnitude vector =
         Math.Sqrt(float ((vector.X*vector.X) + (vector.Y*vector.Y)))
 
-    let norm fst snd =
+    let clockAngle fst snd =
         let sndRel = relativeVector fst snd
         let fstRel = { X = 0; Y = -1}
 
@@ -41,7 +41,7 @@ module Day10 =
 
     let getAngle vector vectors =
         vectors |> List.filter (fun x-> (x <>  vector)) 
-                |> List.map (fun x-> (norm vector x, manhattenDistance x vector, x)) 
+                |> List.map (fun x-> (clockAngle vector x, manhattenDistance x vector, x)) 
 
     let getAngles vectors =
         vectors

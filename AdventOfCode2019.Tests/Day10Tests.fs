@@ -15,7 +15,7 @@ let ``Part1`` () =
 let ``Part2`` () =
     let input = File.ReadAllLines(@"Input/Day10.txt") |> Array.toList
     let res = part2 input 200
-    let expected = 276
+    let expected = 1321
     Assert.Equal(expected, res) 
  
 [<Fact>]

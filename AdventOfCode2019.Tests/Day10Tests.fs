@@ -14,7 +14,7 @@ let ``Part1`` () =
 [<Fact>]
 let ``Part2`` () =
     let input = File.ReadAllLines(@"Input/Day10.txt") |> Array.toList
-    let res = part2 input
+    let res = part2 input 200
     let expected = 276
     Assert.Equal(expected, res) 
  
@@ -39,6 +39,6 @@ let ``Example2`` () =
 let ``Example3`` () =
     let input = [".#....#####...#..";"##...##.#####..##";"##...#...#.#####.";"..#.....#...###..";"..#.#.....#....##"]
         
-    let res = part2 input
-    let expected = 33
+    let res = part2 input 5
+    let expected = 902
     Assert.Equal(expected, res)

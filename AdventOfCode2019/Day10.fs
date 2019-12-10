@@ -49,10 +49,23 @@ module Day10 =
         let rows = input |> List.map (fun x-> Seq.toList x)
         rowsToGrid rows |> getAngles
 
-    let part2 input =
+    let getAt (items: (int*int*Vector) list) spot =
+        let rec getAtInt items currentAngle curr =
+            let sorted = items|> List.sortBy (fun (ang,dist,_) -> ang,dist)
+            let hmm = sorted |> List.filter (fun (ang,_,_) -> ang>currentAngle)
+
+            if (hmm.IsEmpty) then getAtInt sorted -1 curr else
+                if (curr = spot) then hmm.Head else
+                    let (ang,_,_) = hmm.Head
+                    getAtInt hmm.Tail ang (curr+1)
+        
+        getAtInt items -1 1
+
+
+    let part2 input spot =
         let rows = input |> List.map (fun x-> Seq.toList x) |> rowsToGrid 
         let (station,_) = part1 input
 
-        let ordered = getAngle station rows |> List.sortBy (fun (angle,distance,_) -> distance,angle)
-        let (_,_,vec) = ordered.[200]
+        let items = getAngle station rows 
+        let (ang,dis,vec) = getAt items spot
         (vec.X*100)+vec.Y

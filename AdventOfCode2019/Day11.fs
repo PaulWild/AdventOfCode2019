@@ -84,6 +84,34 @@ module Day11 =
         let data = InitState map None
         processMoves data Map.empty {X=0;Y=0} Up
 
+    let ColourToOutput colour =
+        match colour with
+        | Black -> ' '
+        | White -> '\u2588'
+    
+    let part2 input =
+        let map = stringToMap input
+        let data = InitState map None
+        let map = Map.empty |> Map.add {X=0; Y=0} White
+        let results = processMoves data map {X=0;Y=0} Up
+        
+        let maxX = results |> Map.toList |> List.map (fun (pos,_) -> pos.X) |> List.max
+        let minX = results |> Map.toList |> List.map (fun (pos,_) -> pos.X) |> List.min
+        let maxY = results |> Map.toList |> List.map (fun (pos,_) -> pos.Y) |> List.max
+        let minY = results |> Map.toList |> List.map (fun (pos,_) -> pos.Y) |> List.min     
+        
+        let output = seq {for y in [minY..maxY] do
+                            let inner = seq {
+                                            for x in  [minX..maxX] do
+                                                yield getColourAtPos results {X=x; Y=y} |>  ColourToOutput
+                                            }
+                            yield inner 
+                    }
+
+        output |> Seq.map (fun x -> x |> Seq.toArray |> System.String) |> Seq.toList |> String.concat "\r\n" 
+        
+
+
 
 
 

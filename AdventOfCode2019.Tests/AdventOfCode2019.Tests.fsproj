@@ -8,15 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Day9Tests.fs" />
-        <Compile Include="Day1Tests.fs" />
-        <Compile Include="Day2Tests.fs" />
-        <Compile Include="Day3Tests.fs" />
-        <Compile Include="Days4Tests.fs" />
-        <Compile Include="Day5Tests.fs" />
-        <Compile Include="Day6Tests.fs" />
-        <Compile Include="Day7Tests.fs" />
-        <Compile Include="Day8Tests.fs" />
+        <Compile Include="Day01Tests.fs" />
+        <Compile Include="Day02Tests.fs" />
+        <Compile Include="Day03Tests.fs" />
+        <Compile Include="Days04Tests.fs" />
+        <Compile Include="Day05Tests.fs" />
+        <Compile Include="Day06Tests.fs" />
+        <Compile Include="Day07Tests.fs" />
+        <Compile Include="Day08Tests.fs" />
+        <Compile Include="Day09Tests.fs" />
         <Compile Include="Day10Tests.fs" />
         <Compile Include="Day11Tests.fs" />
         <Compile Include="Program.fs" />

@@ -18,6 +18,12 @@ let ``Example2`` () =
 [<Fact>]
 let ``Part1`` () =
     let result = part1 day12Input 1000
-    let expected = 179
+    let expected = 6849
     Assert.Equal(expected, result) 
 
+
+[<Fact>]
+let ``lcdTest1`` () =
+    let result = lcd [33; 27]
+    let expected = 3
+    Assert.Equal(expected, result) 

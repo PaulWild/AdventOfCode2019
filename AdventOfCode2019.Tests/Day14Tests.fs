@@ -22,7 +22,7 @@ type Day14Tests(output:ITestOutputHelper) =
 
       
         let res = getInput input |> reduce
-        Assert.Equal(13312, res) 
+        Assert.Equal(13312L, res) 
 
     [<Fact>]
     member __.``ExampleX`` () =    
@@ -36,7 +36,7 @@ type Day14Tests(output:ITestOutputHelper) =
 
       
         let res = getInput input |> reduce
-        Assert.Equal(31, res) 
+        Assert.Equal(31L, res) 
     
     [<Fact>]
     member __.``Example1`` () =
@@ -51,7 +51,7 @@ type Day14Tests(output:ITestOutputHelper) =
 
       
         let res = getInput input |> reduce
-        Assert.Equal(165, res) 
+        Assert.Equal(165L, res) 
     
 
     [<Fact>]
@@ -77,7 +77,7 @@ type Day14Tests(output:ITestOutputHelper) =
 
       
         let res = getInput input |> reduce
-        Assert.Equal(2210736, res) 
+        Assert.Equal(2210736L, res) 
 
     [<Fact>]
     member __.``Example4`` () =
@@ -97,7 +97,7 @@ type Day14Tests(output:ITestOutputHelper) =
 
       
         let res = getInput input |> reduce
-        Assert.Equal(180697, res) 
+        Assert.Equal(180697L, res) 
 
 
     [<Fact>]
@@ -107,6 +107,58 @@ type Day14Tests(output:ITestOutputHelper) =
 
       
         let res = getInput input |> reduce
-        Assert.Equal(165, res) 
+        Assert.Equal(337862L, res) 
 
 
+
+    [<Fact>]
+    member __.``Part2Example1`` () =
+        
+        let input = "2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
+17 NVRVD, 3 JNWZP => 8 VPVL
+53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL
+22 VJHF, 37 MNCFX => 5 FWMGM
+139 ORE => 4 NVRVD
+144 ORE => 7 JNWZP
+5 MNCFX, 7 RFSQX, 2 FWMGM, 2 VPVL, 19 CXFTF => 3 HVMC
+5 VJHF, 7 MNCFX, 9 VPVL, 37 CXFTF => 6 GNMV
+145 ORE => 6 MNCFX
+1 NVRVD => 8 CXFTF
+1 VJHF, 6 MNCFX => 4 RFSQX
+176 ORE => 6 VJHF"
+
+      
+        let res = getInput input |> part2
+        Assert.Equal(5586022L, res) 
+
+    [<Fact>]
+    member __.``Part2Example2`` () =
+        
+        let input = "171 ORE => 8 CNZTR
+7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL
+114 ORE => 4 BHXH
+14 VRPVC => 6 BMBT
+6 BHXH, 18 KTJDG, 12 WPTQ, 7 PLWSL, 31 FHTLT, 37 ZDVW => 1 FUEL
+6 WPTQ, 2 BMBT, 8 ZLQW, 18 KTJDG, 1 XMNCP, 6 MZWV, 1 RJRHP => 6 FHTLT
+15 XDBXC, 2 LTCX, 1 VRPVC => 6 ZLQW
+13 WPTQ, 10 LTCX, 3 RJRHP, 14 XMNCP, 2 MZWV, 1 ZLQW => 1 ZDVW
+5 BMBT => 4 WPTQ
+189 ORE => 9 KTJDG
+1 MZWV, 17 XDBXC, 3 XCVML => 2 XMNCP
+12 VRPVC, 27 CNZTR => 2 XDBXC
+15 KTJDG, 12 BHXH => 5 XCVML
+3 BHXH, 2 VRPVC => 7 MZWV
+121 ORE => 7 VRPVC
+7 XCVML => 6 RJRHP
+5 BHXH, 4 VRPVC => 5 LTCX"
+      
+        let res = getInput input |> part2
+        Assert.Equal(460664L, res) 
+
+
+    [<Fact>]
+    member __.``Part2`` () =
+        let input = File.ReadAllText("Input/Day14.txt")
+
+        let res = getInput input |> part2
+        Assert.Equal(3687786L, res) 

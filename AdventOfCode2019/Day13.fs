@@ -30,8 +30,9 @@ module Day13 =
         
         let output = Processor data
         chunk output.Output List.empty |> List.filter (fun (pos,x) -> x = Block) |> List.length
-        
-    let rec play input theBoard =
+
+            
+    let rec play input theBoard runWithBoard =
         let output = Processor input
         let board = chunk output.Output List.empty 
 
@@ -45,16 +46,18 @@ module Day13 =
                        if (ball.X > paddle.X) then {output with Input = Some 1L; Output = List.empty } else
                        {output with Input = Some 0L;  Output = List.empty }
   
+        runWithBoard newBoard
         if blockCount = 0 then
             let score = board |> List.find (fun (_,x) -> match x with | Score(_) -> true | _ -> false) |> snd
             match score with
             | Score(x) -> x
             | _ -> -1L
         else
-            play newInput newBoard
+            play newInput newBoard runWithBoard
         
 
+    
     let part2 input =
         let map = (stringToMap input) |> Map.add 0L 2L
         let data = InitState map None 
-        play data Map.empty
+        play data Map.empty (fun _ -> ())

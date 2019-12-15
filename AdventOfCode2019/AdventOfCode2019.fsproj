@@ -19,6 +19,8 @@
         <Compile Include="Day11.fs" />
         <Compile Include="Day12.fs" />
         <Compile Include="Day13.fs" />
+        <Compile Include="Day14.fs" />
+        <Compile Include="Day15.fs" />
         <Content Include="Input\Day11.txt">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -52,6 +54,16 @@
         <Content Include="Input\Day13.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <Content Include="Input\Day14.txt">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Input\Day15.txt">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FParsec" Version="1.0.3" />
     </ItemGroup>
 
 </Project>

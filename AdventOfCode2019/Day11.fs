@@ -1,5 +1,6 @@
 ﻿namespace AdventOfCode2019
 
+open System.Collections.Generic
 open IntCode
 
 module Day11 =
@@ -87,7 +88,7 @@ module Day11 =
     let ColourToOutput colour =
         match colour with
         | Black -> ' '
-        | White -> '\u2588'
+        | White -> '█'
     
     let part2 input =
         let map = stringToMap input
@@ -109,13 +110,3 @@ module Day11 =
                     }
 
         output |> Seq.map (fun x -> x |> Seq.toArray |> System.String) |> Seq.toList |> String.concat "\r\n" 
-        
-
-
-
-
-
-
-
-
-

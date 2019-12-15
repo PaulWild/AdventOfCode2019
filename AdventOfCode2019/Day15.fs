@@ -1,6 +1,5 @@
 namespace AdventOfCode2019
 
-
 open IntCode
 
 module Day15 =
@@ -31,71 +30,48 @@ module Day15 =
         | South -> { pos with X= pos.X + 1L }
         | East  -> { pos with Y= pos.Y + 1L }
         | West  -> { pos with Y= pos.Y - 1L }
-    
-    let go rawInput =
+
+    let rec randomWalk program (spaceMap: Map<Position,Square>) position direction=
+        let potentialMove = move position direction
         
-        let rec randomWalk program (spaceMap: Map<Position,Square>) position direction=
-            let potentialMove = move position direction
+        if (spaceMap.ContainsKey(potentialMove)) then [None] //We have been here so remove this path
+        else
+            let inputedProrgram = { program with Input = Some(dirToInt direction) }
+            let movedProgram = Processor inputedProrgram
+            let newSquare = intToSquare movedProgram.Output.Head
+            let newSpaceMap = spaceMap.Add(potentialMove, newSquare)
             
-            if (spaceMap.ContainsKey(potentialMove)) then None //We have been here so remove this path
-            else
-                let inputedProrgram = { program with Input = Some(dirToInt direction) }
-                let movedProgram = Processor inputedProrgram
-                let newSquare = intToSquare movedProgram.Output.Head
-                let newSpaceMap = spaceMap.Add(potentialMove, newSquare)
-                
-                match newSquare with
-                | Wall -> None
-                | Oxygen -> Some (potentialMove, movedProgram, movedProgram.Output.Length)
-                | Space ->
-                            let lst = [randomWalk movedProgram newSpaceMap potentialMove North;
-                                        randomWalk movedProgram newSpaceMap potentialMove East;
-                                        randomWalk movedProgram newSpaceMap potentialMove South;
-                                        randomWalk movedProgram newSpaceMap potentialMove West] |> List.choose id
-                            if (List.isEmpty lst) then None else Some(List.minBy (fun (_,_,dis) -> dis) lst)
-        
+            match newSquare with
+            | Wall -> [Some (position, inputedProrgram, false, inputedProrgram.Output.Length)]
+            | Oxygen -> [Some (potentialMove, movedProgram, true, movedProgram.Output.Length)]
+            | Space -> [randomWalk movedProgram newSpaceMap potentialMove North;
+                            randomWalk movedProgram newSpaceMap potentialMove East;
+                            randomWalk movedProgram newSpaceMap potentialMove South;
+                            randomWalk movedProgram newSpaceMap potentialMove West] 
+                        |> List.collect (fun x-> x)
+
+    let part1 rawInput =
         let input = stringToMap rawInput
         let start = { X =0L; Y=0L }
         let spaceMap = [(start, Space)] |> Map.ofSeq
         let program = InitState input None
         
-        [randomWalk program spaceMap start North;
-         randomWalk program spaceMap start South;
-         randomWalk program spaceMap start East;
-         randomWalk program spaceMap start West] |> List.choose id |> List.minBy (fun (_,_,dis) -> dis)
+        let results = [randomWalk program spaceMap start North;
+                         randomWalk program spaceMap start South;
+                         randomWalk program spaceMap start East;
+                         randomWalk program spaceMap start West] |> List.collect (fun x->x)
+        results |> List.choose id |> List.filter (fun (_,_,isOxygen,_) -> isOxygen ) |> List.minBy (fun (_,_,_,dis) -> dis)
 
-        
 
-    let go2 rawInput =
-        let (oxygenPos,program,_) =go rawInput
-        
-        let rec randomWalk program (spaceMap: Map<Position,Square>) position direction=
-            let potentialMove = move position direction
-            
-            if (spaceMap.ContainsKey(potentialMove)) then None //We have been here so remove this path
-            else
-                let inputedProrgram = { program with Input = Some(dirToInt direction) }
-                let movedProgram = Processor inputedProrgram
-                let newSquare = intToSquare movedProgram.Output.Head
-                let newSpaceMap = spaceMap.Add(potentialMove, newSquare)
-                
-                match newSquare with
-                | Wall -> Some (position, movedProgram.Output.Length-1) // dont move for a wall
-                | Oxygen -> Some (potentialMove, movedProgram.Output.Length)
-                | Space -> 
-                            let lst = [randomWalk movedProgram newSpaceMap potentialMove North;
-                                        randomWalk movedProgram newSpaceMap potentialMove East;
-                                        randomWalk movedProgram newSpaceMap potentialMove South;
-                                        randomWalk movedProgram newSpaceMap potentialMove West] |> List.choose id
-                            if (List.isEmpty lst) then None else Some(List.maxBy (fun (_, dis) -> dis) lst)
-
-        let spaceMap = [(oxygenPos, Oxygen)] |> Map.ofSeq
+    let part2 rawInput =
+        let (pos,program,_,_) =part1 rawInput
+        let spaceMap = [(pos, Oxygen)] |> Map.ofSeq
   
-        let tmp = [randomWalk { program with Output=List.empty} spaceMap oxygenPos North;
-                     randomWalk program spaceMap oxygenPos East;
-                     randomWalk program spaceMap oxygenPos South;
-                     randomWalk program spaceMap oxygenPos West]
-        tmp |> List.choose id |> List.maxBy (fun (_,dis) -> dis)
+        let results = [randomWalk { program with Output=List.empty} spaceMap pos North;
+                     randomWalk program spaceMap pos East;
+                     randomWalk program spaceMap pos South;
+                     randomWalk program spaceMap pos West] |> List.collect (fun x->x)
+        results |> List.choose id |> List.maxBy (fun (_,_,_,dis) -> dis)
 
 
 

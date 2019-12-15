@@ -28,9 +28,18 @@ let printer (x: Map<Pos,Tile>) =
 
 [<EntryPoint>]
 let main argv =
-    let input = File.ReadAllText(@"Input/Day13.txt")
-    let map = (stringToMap input) |> Map.add 0L 2L
-    let data = InitState map None 
-    play data Map.empty printer
+
+    if argv.Length = 1 then
+        match argv.[0] with
+        | "13" -> 
+            let input = File.ReadAllText(@"Input/Day13.txt")
+            let map = (stringToMap input) |> Map.add 0L 2L
+            let data = InitState map None 
+            play data Map.empty printer
+            -1
+        | "15" -> 
+            AdventOfCodeRunner.Day15Runner.runner
+            -1
+        | _ -> failwithf "wrong day"
+    else  -1 
     
-    -1

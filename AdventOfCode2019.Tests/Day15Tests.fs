@@ -12,7 +12,7 @@ type Day15Tests(output:ITestOutputHelper) =
         let input = File.ReadAllText(@"Input/Day15.txt")
         let expected = 300
         
-        let (_,_,_,actual) = part1 input
+        let (_,_,_,actual) = part1 input (fun _ _ _-> ())
 
         Assert.Equal(expected, actual) 
 
@@ -20,7 +20,7 @@ type Day15Tests(output:ITestOutputHelper) =
     member __.``Part2`` () =
         let input = File.ReadAllText(@"Input/Day15.txt")
         let expected = 312
-        
-        let (_,_,_,actual) = part2 input
+       
+        let (_,_,_,actual) = part2 input (fun _ _ _-> ())
 
         Assert.Equal(expected, actual) 

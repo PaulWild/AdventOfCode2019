@@ -21,8 +21,11 @@
         <Compile Include="Day13.fs" />
         <Compile Include="Day14.fs" />
         <Compile Include="Day15.fs" />
+<<<<<<< HEAD
         <Compile Include="Day16.fs" />
+=======
         <Compile Include="Program.fs" />
+>>>>>>> c6e4951a1cb8a7123fb120139c510734fe2d58a3
         <Content Include="Input\Day11.txt">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>

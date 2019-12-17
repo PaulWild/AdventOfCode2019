@@ -1,4 +1,5 @@
 ﻿// Learn more about F# at http://fsharp.org
+module AdvetOfCodeRunner 
 
 open System
 open System.IO
@@ -24,6 +25,7 @@ let printer (x: Map<Pos,Tile>) =
         Console.SetCursorPosition(int x, int y)
         Console.Write (tileToIcon tile))
     Thread.SpinWait 100
+
     
 
 [<EntryPoint>]
@@ -37,9 +39,7 @@ let main argv =
             let data = InitState map None 
             play data Map.empty printer
             -1
-        | "15" -> 
-            AdventOfCodeRunner.Day15Runner.runner
-            -1
+        | "15" -> failwithf "not implemented"
         | _ -> failwithf "wrong day"
     else  -1 
     

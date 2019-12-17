@@ -21,8 +21,6 @@
         <Compile Include="Day13.fs" />
         <Compile Include="Day14.fs" />
         <Compile Include="Day15.fs" />
-        <Compile Include="Day16.fs" />
-        <Compile Include="Program.fs" />
         <Content Include="Input\Day11.txt">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -54,7 +52,7 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <Content Include="Input\Day13.txt">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <Content Include="Input\Day14.txt">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -62,14 +60,10 @@
         <Content Include="Input\Day15.txt">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="Input\Day16.txt">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="FParsec" Version="1.0.3" />
-      <PackageReference Include="xunit" Version="2.4.1" />
     </ItemGroup>
 
 </Project>

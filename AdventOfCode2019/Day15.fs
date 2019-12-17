@@ -31,7 +31,7 @@ module Day15 =
         | East  -> { pos with Y= pos.Y + 1L }
         | West  -> { pos with Y= pos.Y - 1L }
 
-    let rec randomWalk program (spaceMap: Map<Position,Square>) position direction=
+    let rec randomWalk program (spaceMap: Map<Position,Square>) position direction printer=
         let potentialMove = move position direction
         
         if (spaceMap.ContainsKey(potentialMove)) then [None] //We have been here so remove this path
@@ -41,36 +41,41 @@ module Day15 =
             let newSquare = intToSquare movedProgram.Output.Head
             let newSpaceMap = spaceMap.Add(potentialMove, newSquare)
             
+            printer potentialMove newSquare 
+
             match newSquare with
             | Wall -> [Some (position, inputedProrgram, false, inputedProrgram.Output.Length)]
             | Oxygen -> [Some (potentialMove, movedProgram, true, movedProgram.Output.Length)]
-            | Space -> [randomWalk movedProgram newSpaceMap potentialMove North;
-                            randomWalk movedProgram newSpaceMap potentialMove East;
-                            randomWalk movedProgram newSpaceMap potentialMove South;
-                            randomWalk movedProgram newSpaceMap potentialMove West] 
+            | Space -> [randomWalk movedProgram newSpaceMap potentialMove North printer;
+                            randomWalk movedProgram newSpaceMap potentialMove East printer;
+                            randomWalk movedProgram newSpaceMap potentialMove South printer;
+                            randomWalk movedProgram newSpaceMap potentialMove West printer] 
                         |> List.collect (fun x-> x)
 
-    let part1 rawInput =
+    let part1 rawInput p  =
+        let printer = p false
         let input = stringToMap rawInput
         let start = { X =0L; Y=0L }
         let spaceMap = [(start, Space)] |> Map.ofSeq
         let program = InitState input None
         
-        let results = [randomWalk program spaceMap start North;
-                         randomWalk program spaceMap start South;
-                         randomWalk program spaceMap start East;
-                         randomWalk program spaceMap start West] |> List.collect (fun x->x)
+        let results = [randomWalk program spaceMap start North printer;
+                         randomWalk program spaceMap start South printer;
+                         randomWalk program spaceMap start East printer;
+                         randomWalk program spaceMap start West printer] |> List.collect (fun x->x)
         results |> List.choose id |> List.filter (fun (_,_,isOxygen,_) -> isOxygen ) |> List.minBy (fun (_,_,_,dis) -> dis)
 
 
-    let part2 rawInput =
-        let (pos,program,_,_) =part1 rawInput
+    let part2 rawInput p =
+        let (pos,program,_,_) =part1 rawInput p 
+        let printer = p true
+
         let spaceMap = [(pos, Oxygen)] |> Map.ofSeq
   
-        let results = [randomWalk { program with Output=List.empty} spaceMap pos North;
-                     randomWalk program spaceMap pos East;
-                     randomWalk program spaceMap pos South;
-                     randomWalk program spaceMap pos West] |> List.collect (fun x->x)
+        let results = [randomWalk { program with Output=List.empty} spaceMap pos North printer;
+                     randomWalk program spaceMap pos East printer;
+                     randomWalk program spaceMap pos South printer;
+                     randomWalk program spaceMap pos West printer] |> List.collect (fun x->x)
         results |> List.choose id |> List.maxBy (fun (_,_,_,dis) -> dis)
 
 

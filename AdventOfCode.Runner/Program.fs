@@ -40,6 +40,9 @@ let main argv =
         | "15" -> 
             AdventOfCodeRunner.Day15Runner.runner
             -1
+         | "17" -> 
+            AdventOfCodeRunner.Day17Runner.runner
+            -1
         | _ -> failwithf "wrong day"
     else  -1 
     

@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <Compile Include="Day15Runner.fs" />
+        <Compile Include="Day17Runner.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
